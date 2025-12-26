@@ -19,7 +19,8 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
-      "Bash(cmd //c taskkill //PID 29300 //F)"
+      "Bash(cmd //c taskkill //PID 29300 //F)",
+      "Bash(cmd //c taskkill //PID 29932 //F)"
     ]
   }
 }

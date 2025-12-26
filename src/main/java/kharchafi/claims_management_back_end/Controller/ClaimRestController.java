@@ -123,20 +123,20 @@ public class ClaimRestController {
         payload.messageType = "CLAIM_MESSAGE";
         payload.timestamp = Instant.now().toString();
         payload.claimId = claimId;
+        payload.claimNumber = claim.getClaimNumber();
 
         payload.user = new ClaimPayload.User();
         payload.user.id = userId;
         payload.user.name = claim.getUserName();
         payload.user.email = claim.getUserEmail();
 
-        payload.claim = new ClaimPayload.Claim();
-        payload.claim.serviceType = claim.getServiceType();
-        payload.claim.description = (String) request.get("message");
+        // NEW: message and attachments at root level
+        payload.message = (String) request.get("message");
 
         @SuppressWarnings("unchecked")
         List<Map<String, String>> attachments = (List<Map<String, String>>) request.get("attachments");
         if (attachments != null) {
-            payload.claim.attachments = attachments.stream()
+            payload.attachments = attachments.stream()
                     .map(att -> {
                         ClaimPayload.Attachment a = new ClaimPayload.Attachment();
                         a.url = att.get("url");
@@ -146,6 +146,8 @@ public class ClaimRestController {
                     })
                     .collect(Collectors.toList());
         }
+
+        // Note: ClaimIngestService.handleClaimMessage will set claim.serviceType from database
 
         // Use existing ingest service
         ingestService.ingest(payload);
