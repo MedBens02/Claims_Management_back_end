@@ -24,6 +24,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -107,7 +108,14 @@ public class ClaimIngestService {
 
         // ✅ IMPORTANT : éviter NPE + topic invalide
         if (p.claim.serviceType == null || p.claim.serviceType.isBlank()) {
-            throw new IllegalArgumentException("claim.serviceType is required (water/electricity/roads/waste/transport/...)");
+            throw new IllegalArgumentException("claim.serviceType is required (SPK/RFM/TRM/ENV/WM/PAT/PRP/STR/WEM/GDD/MTU/AGD/AEP)");
+        }
+
+        // Validate service code against known values
+        Set<String> validCodes = Set.of("SPK", "RFM", "TRM", "ENV", "WM", "PAT", "PRP", "STR", "WEM", "GDD", "MTU", "AGD", "AEP");
+        if (!validCodes.contains(p.claim.serviceType)) {
+            throw new IllegalArgumentException(
+                "Invalid service type: " + p.claim.serviceType + ". Must be one of: " + validCodes);
         }
 
         ClaimEntity c = new ClaimEntity();
@@ -172,13 +180,14 @@ public class ClaimIngestService {
             throw new IllegalArgumentException("claimId required for CLAIM_MESSAGE");
         }
 
-        // ✅ IMPORTANT : si tu publies vers serviceTopic(p.claim.serviceType)
-        if (p.claim == null || p.claim.serviceType == null || p.claim.serviceType.isBlank()) {
-            throw new IllegalArgumentException("claim.serviceType required for CLAIM_MESSAGE");
-        }
-
         ClaimEntity c = claimRepo.findById(p.claimId)
                 .orElseThrow(() -> new IllegalArgumentException("Claim not found: " + p.claimId));
+
+        // Set serviceType from database for Kafka publishing
+        if (p.claim == null) {
+            p.claim = new ClaimPayload.Claim();
+        }
+        p.claim.serviceType = c.getServiceType();
 
         ClaimMessageEntity m = new ClaimMessageEntity();
         m.setId(UUID.randomUUID().toString());
@@ -187,14 +196,19 @@ public class ClaimIngestService {
         m.setSenderId(p.user != null ? p.user.id : null);
         m.setSenderName(p.user != null ? p.user.name : null);
 
-        String msg = (p.claim != null && p.claim.description != null) ? p.claim.description : "";
+        // Use message from root level
+        String msg = (p.message != null) ? p.message : "";
         m.setMessage(msg);
 
-        List<?> attachments = (p.claim != null ? p.claim.attachments : null);
-        m.setAttachmentsJson(toJsonArray(attachments));
+        // Use attachments from root level
+        m.setAttachmentsJson(toJsonArray(p.attachments));
 
         m.setKafkaMessageId(p.messageId);
         msgRepo.save(m);
+
+        System.out.println("CLAIM_MESSAGE saved: claimId=" + c.getId()
+            + ", messageId=" + m.getId()
+            + ", msg=" + msg);
     }
 
     private void handleServiceResponse(ServiceResponsePayload p) {

@@ -3,8 +3,7 @@ server:
 
 spring:
   autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+    exclude: []
   datasource:
     url: jdbc:mysql://localhost:3306/smartcity_claims?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
@@ -18,7 +17,7 @@ spring:
     enabled: false   # mets true si tu veux gérer le schéma via Flyway
 
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: portal-claims-service
       auto-offset-reset: earliest
@@ -33,7 +32,7 @@ spring:
 
 app:
   kafka:
-    enabled: false
+    enabled: true
     topics:
       submitted: claims.submitted
       responses: claims.responses

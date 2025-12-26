@@ -15,9 +15,6 @@ public class ClaimKafkaPublisher {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper mapper;
 
-    @Value("${app.kafka.topics.submitted}")
-    private String submittedTopic;
-
     @Value("${app.kafka.serviceTopicPrefix}")
     private String serviceTopicPrefix;
 
@@ -27,7 +24,7 @@ public class ClaimKafkaPublisher {
     }
 
     public void publishClaimCreated(ClaimPayload p) {
-        sendJson(submittedTopic, p.claimId, p);
+        // Only publish to service-specific topic (claims.{serviceCode})
         sendJson(serviceTopic(p.claim.serviceType), p.claimId, p);
     }
 
@@ -35,8 +32,9 @@ public class ClaimKafkaPublisher {
         sendJson(serviceTopic(p.claim.serviceType), p.claimId, p);
     }
 
-    private String serviceTopic(String serviceType) {
-        return serviceTopicPrefix + serviceType; // claims.water
+    private String serviceTopic(String serviceCode) {
+        // serviceCode is already WM, SPK, etc.
+        return serviceTopicPrefix + serviceCode; // claims.WM, claims.SPK
     }
 
     private void sendJson(String topic, String key, Object payload) {

@@ -2,7 +2,24 @@
   "permissions": {
     "allow": [
       "Bash(mvn clean install:*)",
-      "Bash(mvn spring-boot:run:*)"
+      "Bash(mvn spring-boot:run:*)",
+      "Bash(docker port:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker network:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker run:*)",
+      "Bash(timeout 15 bash:*)",
+      "Bash(for code in SPK RFM TRM ENV WM PAT PRP STR WEM GDD MTU AGD AEP)",
+      "Bash(do docker exec kafka-claims /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --topic claims.$code --partitions 3 --replication-factor 1 --if-not-exists)",
+      "Bash(done)",
+      "Bash(mvn clean compile:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c taskkill //PID 29300 //F)"
     ]
   }
 }

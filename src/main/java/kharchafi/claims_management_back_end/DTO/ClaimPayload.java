@@ -14,6 +14,10 @@ public class ClaimPayload {
     public User user;
     public Claim claim;
 
+    // For CLAIM_MESSAGE: message and attachments at root level
+    public String message;
+    public List<Attachment> attachments;
+
     public static class User {
         public String id;
         public String email;
@@ -37,6 +41,7 @@ public class ClaimPayload {
         public Double longitude;
     }
 
+    // Moved outside Claim class to be reusable at root level
     public static class Attachment {
         public String url;
         public String fileName;

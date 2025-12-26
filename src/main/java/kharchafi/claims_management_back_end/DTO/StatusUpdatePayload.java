@@ -20,7 +20,7 @@ public class StatusUpdatePayload {
     public static class Status {
         public String previous;
 
-        @JsonProperty("new")   // IMPORTANT pour accepter "new" dans JSON
+        @JsonProperty("newStatus") // OU supprime l'annotation carrément
         public String newStatus;
 
         public String reason;
@@ -38,4 +38,3 @@ public class StatusUpdatePayload {
         public String closingMessage;
     }
 }
-
