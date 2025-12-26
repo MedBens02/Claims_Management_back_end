@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import kharchafi.claims_management_back_end.DTO.StatusUpdatePayload;
 import kharchafi.claims_management_back_end.Entity.ClaimEntity;
 import kharchafi.claims_management_back_end.Entity.ClaimStatusHistoryEntity;
+import kharchafi.claims_management_back_end.Enum.ClaimStatus;
 import kharchafi.claims_management_back_end.Repository.ClaimRepository;
 import kharchafi.claims_management_back_end.Repository.ClaimStatusHistoryRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -56,10 +57,11 @@ public class StatusUpdatesListener {
             ClaimEntity claim = claimRepo.findById(p.claimId)
                     .orElseThrow(() -> new IllegalArgumentException("Claim not found: " + p.claimId));
 
-            String prev = claim.getStatus();
-            String newSt = (p.status != null ? p.status.newStatus : null);
-            if (newSt == null || newSt.isBlank()) throw new IllegalArgumentException("status.new required");
+            ClaimStatus prev = claim.getStatus();
+            String newStString = (p.status != null ? p.status.newStatus : null);
+            if (newStString == null || newStString.isBlank()) throw new IllegalArgumentException("status.new required");
 
+            ClaimStatus newSt = ClaimStatus.fromValue(newStString);
             claim.setStatus(newSt);
 
             if (p.status != null && p.status.assignedTo != null) {

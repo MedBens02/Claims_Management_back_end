@@ -82,15 +82,15 @@ public class ResponsesListener {
 
             // requestedFields => pending_info + history
             if (p.response != null && p.response.requestedFields != null && !p.response.requestedFields.isEmpty()) {
-                String prev = claim.getStatus();
-                claim.setStatus("pending_info");
+                ClaimStatus prev = claim.getStatus();
+                claim.setStatus(ClaimStatus.PENDING_INFO);
                 claimRepo.save(claim);
 
                 ClaimStatusHistoryEntity h = new ClaimStatusHistoryEntity();
                 h.setId(UUID.randomUUID().toString());
                 h.setClaimId(claim.getId());
                 h.setPreviousStatus(prev);
-                h.setNewStatus("pending_info");
+                h.setNewStatus(ClaimStatus.PENDING_INFO);
                 h.setChangedBy("service");
                 h.setChangeReason("Service requested additional info");
                 h.setKafkaMessageId(p.messageId);
