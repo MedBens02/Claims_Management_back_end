@@ -1,0 +1,42 @@
+server:
+  port: 8081
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+  datasource:
+    url: jdbc:mysql://localhost:3306/smartcity_claims?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+  flyway:
+    enabled: false   # mets true si tu veux gérer le schéma via Flyway
+
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: portal-claims-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      ack-mode: manual
+
+app:
+  kafka:
+    enabled: false
+    topics:
+      submitted: claims.submitted
+      responses: claims.responses
+      statusUpdates: claims.status-updates
+      deadLetter: claims.dead-letter
+    serviceTopicPrefix: "claims."
