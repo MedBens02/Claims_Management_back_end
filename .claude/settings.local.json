@@ -20,7 +20,18 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(cmd //c taskkill //PID 29300 //F)",
-      "Bash(cmd //c taskkill //PID 29932 //F)"
+      "Bash(cmd //c taskkill //PID 29932 //F)",
+      "Bash(cmd //c \"docker exec kafka-claims //opt//kafka//bin//kafka-topics.sh --list --bootstrap-server localhost:9092\")",
+      "Bash(cmd //c:*)",
+      "Bash(ls:*)",
+      "Bash(jps:*)",
+      "Bash(kafka-console-consumer:*)",
+      "Bash(where:*)",
+      "Bash(mysql:*)",
+      "Bash(docker ps:*)",
+      "Bash(cmd.exe /c \"docker exec kafka-claims ls /bin\")",
+      "Bash(docker restart:*)",
+      "Bash(timeout 20 bash -c 'until docker exec kafka-claims test -f /tmp/kraft-combined-logs/meta.properties; do echo \"Waiting for Kafka...\"; sleep 2; done && echo \"Kafka is ready!\"':*)"
     ]
   }
 }
