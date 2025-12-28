@@ -1,13 +1,23 @@
 server:
   port: 8081
 
+# Actuator endpoints for Docker health checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
 spring:
   autoconfigure:
     exclude: []
   datasource:
-    url: jdbc:mysql://localhost:3306/smartcity_claims?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: ""
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/smartcity_claims?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -17,7 +27,7 @@ spring:
     enabled: false   # mets true si tu veux gérer le schéma via Flyway
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: portal-claims-service
       auto-offset-reset: earliest
