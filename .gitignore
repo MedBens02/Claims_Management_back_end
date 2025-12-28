@@ -31,4 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Claude AI
+CLAUDE.md
 .claude/
